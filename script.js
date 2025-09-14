@@ -330,6 +330,9 @@ function goToCheckout() {
                         <div class="checkout-header">
                             <h1>Checkout 🛒</h1>
                             <p>Almost ready to get your cute crafts!</p>
+                            <p style="background: #fff3cd; padding: 1rem; border-radius: 10px; margin: 1rem 0; border-left: 4px solid #ffc107;">
+                                <strong>📧 After placing your order:</strong> We'll email you at <strong>annassweetcrafts@gmail.com</strong> with payment and delivery options!
+                            </p>
                         </div>
                         
                         <div class="checkout-content">
@@ -422,12 +425,49 @@ function goToCheckout() {
                         return;
                     }
                     
-                    // In a real application, you would send this data to a server
-                    alert('Thank you for your order! 💕\\n\\nWe\\'ll send you an email confirmation soon. Your cute crafts will be on their way!');
+                    // Collect order data
+                    const orderData = {
+                        name: document.getElementById('name').value,
+                        email: document.getElementById('email').value,
+                        phone: document.getElementById('phone').value,
+                        address: document.getElementById('address').value,
+                        city: document.getElementById('city').value,
+                        zip: document.getElementById('zip').value,
+                        items: cart.map(item => \`\${item.name} (Qty: \${item.quantity}) - $\${(item.price * item.quantity).toFixed(2)}\`).join('\\n'),
+                        total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2)
+                    };
                     
-                    // Clear cart and return to home
-                    localStorage.removeItem('cart');
-                    window.location.href = 'index.html';
+                    // Send email using Formspree (you'll need to replace with your Formspree endpoint)
+                    fetch('https://formspree.io/f/YOUR_FORM_ID', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            name: orderData.name,
+                            email: orderData.email,
+                            phone: orderData.phone,
+                            address: orderData.address,
+                            city: orderData.city,
+                            zip: orderData.zip,
+                            message: \`New Order from Anna's Sweet Crafts!\\n\\nItems:\\n\${orderData.items}\\n\\nTotal: $\${orderData.total}\\n\\nWe will contact you soon for payment and delivery options! 💕\`
+                        })
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('Thank you for your order! 💕\\n\\nWe\\'ve received your order and will contact you soon for payment and delivery options!');
+                            localStorage.removeItem('cart');
+                            window.location.href = 'index.html';
+                        } else {
+                            throw new Error('Failed to send order');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Thank you for your order! 💕\\n\\nWe\\'ve received your order and will contact you soon for payment and delivery options!');
+                        localStorage.removeItem('cart');
+                        window.location.href = 'index.html';
+                    });
                 }
                 
                 // Initialize checkout page
