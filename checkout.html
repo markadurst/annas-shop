@@ -91,7 +91,6 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
     <script>
         // Load cart from localStorage
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -122,11 +121,21 @@
         
         // Place order
         function placeOrder() {
+            console.log('Place order button clicked!');
+            console.log('Cart contents:', cart);
+            
+            if (cart.length === 0) {
+                alert('Your cart is empty! Please add some items first.');
+                window.location.href = 'index.html';
+                return;
+            }
+            
             const form = document.getElementById('checkoutForm');
             if (!form.checkValidity()) {
                 form.reportValidity();
                 return;
             }
+            console.log('Form is valid, proceeding with order...');
             
             // Collect order data
             const orderData = {
