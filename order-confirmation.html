@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - Anna's Sweet Crafts</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Comic+Neue:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <img src="images/logo.jpg" alt="Anna's Sweet Crafts Logo" class="logo-img">
+                <h1>Anna's Sweet Crafts</h1>
+            </div>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="index.html#products" class="nav-link">Products</a>
+                <a href="index.html#about" class="nav-link">About</a>
+                <a href="index.html#contact" class="nav-link">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Confirmation Section -->
+    <section class="confirmation-page">
+        <div class="container">
+            <div class="confirmation-content">
+                <div class="confirmation-icon">
+                    <span class="success-emoji">🎉</span>
+                </div>
+                
+                <h1>Order Confirmed! 💕</h1>
+                <p class="confirmation-subtitle">Thank you for your order from Anna's Sweet Crafts!</p>
+                
+                <div class="confirmation-details">
+                    <div class="order-info">
+                        <h2>What happens next?</h2>
+                        <div class="steps">
+                            <div class="step">
+                                <span class="step-number">1</span>
+                                <div class="step-content">
+                                    <h3>📧 Email Confirmation</h3>
+                                    <p>You'll receive an email confirmation shortly with your order details</p>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <span class="step-number">2</span>
+                                <div class="step-content">
+                                    <h3>💬 Anna Will Contact You</h3>
+                                    <p>Anna will email you within 24 hours to discuss payment and delivery options</p>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <span class="step-number">3</span>
+                                <div class="step-content">
+                                    <h3>🚚 Your Crafts Ship</h3>
+                                    <p>Once payment is arranged, your handmade crafts will be carefully packaged and shipped!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-info">
+                        <h2>Questions?</h2>
+                        <p>If you have any questions about your order, feel free to reach out:</p>
+                        <div class="contact-details">
+                            <div class="contact-item">
+                                <span class="contact-icon">📧</span>
+                                <span>annassweetcrafts@gmail.com</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="confirmation-actions">
+                    <a href="index.html" class="cta-button">Continue Shopping</a>
+                    <a href="index.html#about" class="secondary-button">Learn More About Anna</a>
+                </div>
+                
+                <div class="thank-you-message">
+                    <p>Thank you for supporting Anna's Sweet Crafts! 💕</p>
+                    <p>Every purchase helps a young entrepreneur follow her dreams!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Anna's Sweet Crafts. Made with 💕 for friends everywhere!</p>
+        </div>
+    </footer>
+
+    <script>
+        // Get order details from URL parameters
+        function getOrderDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderData = {
+                name: urlParams.get('name') || 'Valued Customer',
+                total: urlParams.get('total') || '0.00',
+                items: urlParams.get('items') || '0'
+            };
+            return orderData;
+        }
+
+        // Update confirmation page with order details
+        function updateConfirmationPage() {
+            const orderData = getOrderDetails();
+            
+            // Update the thank you message with customer name
+            const thankYouMessage = document.querySelector('.thank-you-message p:first-child');
+            if (thankYouMessage && orderData.name !== 'Valued Customer') {
+                thankYouMessage.textContent = `Thank you for your order, ${orderData.name}! 💕`;
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            updateConfirmationPage();
+        });
+    </script>
+</body>
+</html>

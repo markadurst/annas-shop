@@ -417,6 +417,30 @@ function goToCheckout() {
                     orderTotal.textContent = total.toFixed(2);
                 }
                 
+                // Send customer confirmation email
+                function sendCustomerConfirmation(orderData) {
+                    // Send a separate email to the customer
+                    fetch('https://formspree.io/f/mvgbngya', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            name: orderData.name,
+                            email: orderData.email,
+                            phone: orderData.phone,
+                            address: orderData.address,
+                            city: orderData.city,
+                            zip: orderData.zip,
+                            message: \`Order Confirmation - Anna's Sweet Crafts\\n\\nDear \${orderData.name},\\n\\nThank you for your order! We're so excited to create these beautiful crafts just for you! 💕\\n\\nYour Order Details:\\n\${orderData.items}\\n\\nTotal: $\${orderData.total}\\n\\nWhat happens next?\\n1. Anna will contact you within 24 hours to discuss payment and delivery options\\n2. Once payment is arranged, your handmade crafts will be carefully packaged and shipped\\n3. You'll receive tracking information when your order ships\\n\\nIf you have any questions, please don't hesitate to contact us at annassweetcrafts@gmail.com\\n\\nThank you for supporting Anna's Sweet Crafts!\\n\\nWith love,\\nAnna 💕\`
+                        })
+                    })
+                    .catch(error => {
+                        console.error('Customer confirmation email failed:', error);
+                        // Don't show error to customer, just log it
+                    });
+                }
+                
                 // Place order
                 function placeOrder() {
                     const form = document.getElementById('checkoutForm');
@@ -455,18 +479,21 @@ function goToCheckout() {
                     })
                     .then(response => {
                         if (response.ok) {
-                            alert('Thank you for your order! 💕\\n\\nWe\\'ve received your order and will contact you soon for payment and delivery options!');
-                            localStorage.removeItem('cart');
-                            window.location.href = 'index.html';
+                            // Send customer confirmation email
+                            sendCustomerConfirmation(orderData);
+                            
+                            // Redirect to confirmation page
+                            const confirmationUrl = `order-confirmation.html?name=${encodeURIComponent(orderData.name)}&total=${orderData.total}&items=${cart.length}`;
+                            window.location.href = confirmationUrl;
                         } else {
                             throw new Error('Failed to send order');
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert('Thank you for your order! 💕\\n\\nWe\\'ve received your order and will contact you soon for payment and delivery options!');
-                        localStorage.removeItem('cart');
-                        window.location.href = 'index.html';
+                        // Still redirect to confirmation page even if email fails
+                        const confirmationUrl = `order-confirmation.html?name=${encodeURIComponent(orderData.name)}&total=${orderData.total}&items=${cart.length}`;
+                        window.location.href = confirmationUrl;
                     });
                 }
                 
