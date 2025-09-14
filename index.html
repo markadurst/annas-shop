@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anna's Sweet Crafts - Handmade Friendship Bracelets</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Comic+Neue:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <img src="images/logo.jpg" alt="Anna's Sweet Crafts Logo" class="logo-img">
+                <h1>Anna's Sweet Crafts</h1>
+            </div>
+            <nav class="nav">
+                <a href="index.html" class="nav-link active">Home</a>
+                <a href="#products" class="nav-link">Products</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </nav>
+            <div class="cart-icon" onclick="toggleCart()">
+                <span class="cart-icon-emoji">🛒</span>
+                <span class="cart-count" id="cartCount">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2>Handmade with Love 💕</h2>
+                <p>Beautiful friendship bracelets made by Anna, perfect for sharing with your best friends!</p>
+                <a href="#products" class="cta-button">Shop Now</a>
+            </div>
+            <div class="hero-image">
+                <img src="images/all_bracelets.jpeg" alt="Colorful friendship bracelets" class="hero-img">
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="products">
+        <div class="container">
+            <h2>Our Beautiful Crafts</h2>
+            <div class="product-categories">
+                <button class="category-btn active" data-category="all">All Products</button>
+                <button class="category-btn" data-category="bracelets">Friendship Bracelets</button>
+                <button class="category-btn" data-category="keychains">Keychain Holders</button>
+            </div>
+            <div class="products-grid" id="productsGrid">
+                <!-- Products will be dynamically loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <h2>About Anna's Sweet Crafts</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>Hi! I'm Anna, and I love making friendship bracelets! Each bracelet is carefully handcrafted with love and comes in beautiful colors. Perfect for sharing with your best friends or keeping for yourself!</p>
+                    <p>All bracelets are made with high-quality materials and are designed to last. They make perfect gifts for birthdays, holidays, or just because!</p>
+                </div>
+                <div class="about-image">
+                    <img src="images/logo.jpg" alt="Anna's Sweet Crafts" class="about-img">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2>Get in Touch</h2>
+            <p>Have questions about our bracelets? Want to place a custom order? We'd love to hear from you!</p>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <span class="contact-icon">📧</span>
+                    <span>annassweetcrafts@gmail.com</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Shopping Cart Sidebar -->
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>Your Cart 🛒</h3>
+            <button class="close-cart" onclick="toggleCart()">×</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <!-- Cart items will be dynamically loaded here -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <strong>Total: $<span id="cartTotal">0.00</span></strong>
+            </div>
+            <button class="checkout-btn" onclick="goToCheckout()">Checkout</button>
+        </div>
+    </div>
+
+    <!-- Cart Overlay -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Anna's Sweet Crafts. Made with 💕 for friends everywhere!</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

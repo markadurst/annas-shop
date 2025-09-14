@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - Anna's Sweet Crafts</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Comic+Neue:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <img src="images/logo.jpg" alt="Anna's Sweet Crafts Logo" class="logo-img">
+                <h1>Anna's Sweet Crafts</h1>
+            </div>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="index.html#products" class="nav-link">Products</a>
+                <a href="index.html#about" class="nav-link">About</a>
+                <a href="index.html#contact" class="nav-link">Contact</a>
+            </nav>
+            <div class="cart-icon" onclick="toggleCart()">
+                <span class="cart-icon-emoji">🛒</span>
+                <span class="cart-count" id="cartCount">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Product Detail Section -->
+    <section class="product-page">
+        <div class="container">
+            <a href="index.html" class="back-to-shop">← Back to Shop</a>
+            
+            <div class="product-detail" id="productDetail">
+                <!-- Product details will be dynamically loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Shopping Cart Sidebar -->
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>Your Cart 🛒</h3>
+            <button class="close-cart" onclick="toggleCart()">×</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <!-- Cart items will be dynamically loaded here -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <strong>Total: $<span id="cartTotal">0.00</span></strong>
+            </div>
+            <button class="checkout-btn" onclick="goToCheckout()">Checkout</button>
+        </div>
+    </div>
+
+    <!-- Cart Overlay -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Anna's Sweet Crafts. Made with 💕 for friends everywhere!</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Product data (same as in script.js)
+        const products = [
+            // Friendship Bracelets
+            {
+                id: 1,
+                name: "Pink Friendship Bracelet",
+                category: "bracelets",
+                price: 5.00,
+                image: "images/pink.jpeg",
+                description: "A beautiful pink friendship bracelet made with love. Perfect for sharing with your best friend! This bracelet is carefully handcrafted using high-quality cotton thread and features a classic friendship bracelet pattern that will last for years to come.",
+                colors: ["Pink"],
+                materials: "High-quality cotton thread",
+                care: "Hand wash gently with mild soap and air dry"
+            },
+            {
+                id: 2,
+                name: "Blue Friendship Bracelet",
+                category: "bracelets",
+                price: 5.00,
+                image: "images/blue.jpeg",
+                description: "A lovely blue friendship bracelet that matches the sky. Great for ocean lovers! This bracelet features a beautiful blue color that reminds you of sunny days and clear skies.",
+                colors: ["Blue"],
+                materials: "High-quality cotton thread",
+                care: "Hand wash gently with mild soap and air dry"
+            },
+            {
+                id: 3,
+                name: "Green Friendship Bracelet",
+                category: "bracelets",
+                price: 5.00,
+                image: "images/green.jpeg",
+                description: "A fresh green friendship bracelet that reminds you of nature. Perfect for outdoor adventures! This bracelet brings the beauty of nature to your wrist.",
+                colors: ["Green"],
+                materials: "High-quality cotton thread",
+                care: "Hand wash gently with mild soap and air dry"
+            },
+            {
+                id: 4,
+                name: "Purple Friendship Bracelet",
+                category: "bracelets",
+                price: 5.00,
+                image: "images/purple.jpeg",
+                description: "A magical purple friendship bracelet that sparkles with friendship magic! This bracelet is perfect for those who love all things magical and mysterious.",
+                colors: ["Purple"],
+                materials: "High-quality cotton thread",
+                care: "Hand wash gently with mild soap and air dry"
+            },
+            {
+                id: 5,
+                name: "Orange Friendship Bracelet",
+                category: "bracelets",
+                price: 5.00,
+                image: "images/orange.jpeg",
+                description: "A bright orange friendship bracelet that brings sunshine to your day! This vibrant bracelet will brighten up any outfit and spread joy wherever you go.",
+                colors: ["Orange"],
+                materials: "High-quality cotton thread",
+                care: "Hand wash gently with mild soap and air dry"
+            },
+            {
+                id: 6,
+                name: "Yellow Friendship Bracelet",
+                category: "bracelets",
+                price: 5.00,
+                image: "images/yellow.jpeg",
+                description: "A cheerful yellow friendship bracelet that spreads happiness wherever you go! This sunny bracelet is perfect for spreading joy and positivity.",
+                colors: ["Yellow"],
+                materials: "High-quality cotton thread",
+                care: "Hand wash gently with mild soap and air dry"
+            },
+            {
+                id: 7,
+                name: "Black Friendship Bracelet",
+                category: "bracelets",
+                price: 5.00,
+                image: "images/black.jpeg",
+                description: "A stylish black friendship bracelet that goes with everything. Perfect for any outfit! This classic bracelet is versatile and elegant.",
+                colors: ["Black"],
+                materials: "High-quality cotton thread",
+                care: "Hand wash gently with mild soap and air dry"
+            },
+            // Keychain Holders
+            {
+                id: 8,
+                name: "Rainbow Keychain Holder",
+                category: "keychains",
+                price: 7.00,
+                image: "images/all_bracelets.jpeg",
+                description: "A colorful rainbow keychain holder that keeps your keys organized and adds a pop of color to your bag! This holder features all the colors of the rainbow and is perfect for keeping your keys safe and easy to find.",
+                colors: ["Rainbow"],
+                materials: "Soft fabric with metal ring",
+                care: "Spot clean with damp cloth"
+            },
+            {
+                id: 9,
+                name: "Pink Heart Keychain Holder",
+                category: "keychains",
+                price: 7.00,
+                image: "images/pink.jpeg",
+                description: "An adorable pink heart-shaped keychain holder that shows your love for organization! This cute holder is perfect for keeping your keys safe and adding a touch of love to your everyday items.",
+                colors: ["Pink"],
+                materials: "Soft fabric with metal ring",
+                care: "Spot clean with damp cloth"
+            },
+            {
+                id: 10,
+                name: "Blue Star Keychain Holder",
+                category: "keychains",
+                price: 7.00,
+                image: "images/blue.jpeg",
+                description: "A twinkling blue star keychain holder that makes your keys shine bright! This star-shaped holder is perfect for those who love to reach for the stars.",
+                colors: ["Blue"],
+                materials: "Soft fabric with metal ring",
+                care: "Spot clean with damp cloth"
+            },
+            {
+                id: 11,
+                name: "Green Leaf Keychain Holder",
+                category: "keychains",
+                price: 7.00,
+                image: "images/green.jpeg",
+                description: "A nature-inspired green leaf keychain holder that brings the outdoors with you! This holder is perfect for nature lovers and those who care about the environment.",
+                colors: ["Green"],
+                materials: "Soft fabric with metal ring",
+                care: "Spot clean with damp cloth"
+            },
+            {
+                id: 12,
+                name: "Purple Unicorn Keychain Holder",
+                category: "keychains",
+                price: 7.00,
+                image: "images/purple.jpeg",
+                description: "A magical purple unicorn keychain holder that adds a touch of fantasy to your everyday! This holder is perfect for unicorn lovers and those who believe in magic.",
+                colors: ["Purple"],
+                materials: "Soft fabric with metal ring",
+                care: "Spot clean with damp cloth"
+            }
+        ];
+
+        // Get product ID from URL parameters
+        function getProductIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return parseInt(urlParams.get('id'));
+        }
+
+        // Display product details
+        function displayProductDetails() {
+            const productId = getProductIdFromUrl();
+            const product = products.find(p => p.id === productId);
+            
+            if (!product) {
+                document.getElementById('productDetail').innerHTML = '<h1>Product not found</h1>';
+                return;
+            }
+
+            document.title = `${product.name} - Anna's Sweet Crafts`;
+            
+            document.getElementById('productDetail').innerHTML = `
+                <img src="${product.image}" alt="${product.name}" class="product-detail-image">
+                <div class="product-detail-info">
+                    <h1>${product.name}</h1>
+                    <div class="product-detail-price">$${product.price.toFixed(2)}</div>
+                    <div class="product-detail-description">
+                        <p>${product.description}</p>
+                    </div>
+                    
+                    <div class="product-specs">
+                        <h3>Product Details</h3>
+                        <p><strong>Colors:</strong> ${product.colors.join(', ')}</p>
+                        <p><strong>Materials:</strong> ${product.materials}</p>
+                        <p><strong>Care Instructions:</strong> ${product.care}</p>
+                    </div>
+                    
+                    <div class="quantity-selector">
+                        <label for="quantity">Quantity:</label>
+                        <select id="quantity">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                    
+                    <button class="add-to-cart-btn" onclick="addToCartWithQuantity(${product.id})">
+                        Add to Cart 🛒
+                    </button>
+                </div>
+            `;
+        }
+
+        // Add to cart with selected quantity
+        function addToCartWithQuantity(productId) {
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const product = products.find(p => p.id === productId);
+            
+            if (!product) return;
+
+            const existingItem = cart.find(item => item.id === productId);
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                cart.push({
+                    ...product,
+                    quantity: quantity
+                });
+            }
+
+            updateCartDisplay();
+            saveCart();
+            showAddToCartAnimation(productId);
+            
+            // Show success message
+            alert(`Added ${quantity} ${product.name}${quantity > 1 ? 's' : ''} to your cart! 💕`);
+        }
+
+        // Initialize product page
+        document.addEventListener('DOMContentLoaded', function() {
+            displayProductDetails();
+            updateCartDisplay();
+        });
+    </script>
+</body>
+</html>
