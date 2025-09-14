@@ -432,7 +432,7 @@ function goToCheckout() {
                             address: orderData.address,
                             city: orderData.city,
                             zip: orderData.zip,
-                            message: \`Order Confirmation - Anna's Sweet Crafts\\n\\nDear \${orderData.name},\\n\\nThank you for your order! We're so excited to create these beautiful crafts just for you! 💕\\n\\nYour Order Details:\\n\${orderData.items}\\n\\nTotal: $\${orderData.total}\\n\\nWhat happens next?\\n1. Anna will contact you within 24 hours to discuss payment and delivery options\\n2. Once payment is arranged, your handmade crafts will be carefully packaged and shipped\\n3. You'll receive tracking information when your order ships\\n\\nIf you have any questions, please don't hesitate to contact us at annassweetcrafts@gmail.com\\n\\nThank you for supporting Anna's Sweet Crafts!\\n\\nWith love,\\nAnna 💕\`
+                            message: `Order Confirmation - Anna's Sweet Crafts\n\nDear ${orderData.name},\n\nThank you for your order! We're so excited to create these beautiful crafts just for you! 💕\n\nYour Order Details:\n${orderData.items}\n\nTotal: $${orderData.total}\n\nWhat happens next?\n1. Anna will contact you within 24 hours to discuss payment and delivery options\n2. Once payment is arranged, your handmade crafts will be carefully packaged and shipped\n3. You'll receive tracking information when your order ships\n\nIf you have any questions, please don't hesitate to contact us at annassweetcrafts@gmail.com\n\nThank you for supporting Anna's Sweet Crafts!\n\nWith love,\nAnna 💕`
                         })
                     })
                     .catch(error => {
@@ -457,7 +457,7 @@ function goToCheckout() {
                         address: document.getElementById('address').value,
                         city: document.getElementById('city').value,
                         zip: document.getElementById('zip').value,
-                        items: cart.map(item => \`\${item.name} (Qty: \${item.quantity}) - $\${(item.price * item.quantity).toFixed(2)}\`).join('\\n'),
+                        items: cart.map(item => `${item.name} (Qty: ${item.quantity}) - $${(item.price * item.quantity).toFixed(2)}`).join('\n'),
                         total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2)
                     };
                     
@@ -474,7 +474,7 @@ function goToCheckout() {
                             address: orderData.address,
                             city: orderData.city,
                             zip: orderData.zip,
-                            message: \`New Order from Anna's Sweet Crafts!\\n\\nItems:\\n\${orderData.items}\\n\\nTotal: $\${orderData.total}\\n\\nWe will contact you soon for payment and delivery options! 💕\`
+                            message: `New Order from Anna's Sweet Crafts!\n\nItems:\n${orderData.items}\n\nTotal: $${orderData.total}\n\nWe will contact you soon for payment and delivery options! 💕`
                         })
                     })
                     .then(response => {
