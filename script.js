@@ -437,8 +437,8 @@ function goToCheckout() {
                         total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2)
                     };
                     
-                    // Send email using Formspree (you'll need to replace with your Formspree endpoint)
-                    fetch('https://formspree.io/f/YOUR_FORM_ID', {
+                    // Send email using Formspree
+                    fetch('https://formspree.io/f/mvgbngya', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
