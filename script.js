@@ -81,46 +81,6 @@ const products = [
         description: "A stylish tiger print keychain holder that keeps your keys organized and adds a wild touch to your bag!",
         colors: ["Tiger Print"],
         materials: "Soft fabric with metal ring"
-    },
-    {
-        id: 9,
-        name: "Pink Heart Keychain Holder",
-        category: "keychains",
-        price: 7.00,
-        image: "images/pink.jpeg",
-        description: "An adorable pink heart-shaped keychain holder that shows your love for organization!",
-        colors: ["Pink"],
-        materials: "Soft fabric with metal ring"
-    },
-    {
-        id: 10,
-        name: "Blue Star Keychain Holder",
-        category: "keychains",
-        price: 7.00,
-        image: "images/blue.jpeg",
-        description: "A twinkling blue star keychain holder that makes your keys shine bright!",
-        colors: ["Blue"],
-        materials: "Soft fabric with metal ring"
-    },
-    {
-        id: 11,
-        name: "Green Leaf Keychain Holder",
-        category: "keychains",
-        price: 7.00,
-        image: "images/green.jpeg",
-        description: "A nature-inspired green leaf keychain holder that brings the outdoors with you!",
-        colors: ["Green"],
-        materials: "Soft fabric with metal ring"
-    },
-    {
-        id: 12,
-        name: "Purple Unicorn Keychain Holder",
-        category: "keychains",
-        price: 7.00,
-        image: "images/purple.jpeg",
-        description: "A magical purple unicorn keychain holder that adds a touch of fantasy to your everyday!",
-        colors: ["Purple"],
-        materials: "Soft fabric with metal ring"
     }
 ];
 
