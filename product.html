@@ -34,6 +34,7 @@
             <a href="index.html" class="back-to-shop">← Back to Shop</a>
             
             <div class="product-detail" id="productDetail">
+                <p>Loading product details...</p>
                 <!-- Product details will be dynamically loaded here -->
             </div>
         </div>
@@ -66,7 +67,6 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
     <script>
         // Product data (same as in script.js)
         const products = [
@@ -151,12 +151,12 @@
             // Keychain Holders
             {
                 id: 8,
-                name: "Rainbow Keychain Holder",
+                name: "Tiger Print Keychain Holder",
                 category: "keychains",
                 price: 7.00,
-                image: "images/all_bracelets.jpeg",
-                description: "A colorful rainbow keychain holder that keeps your keys organized and adds a pop of color to your bag! This holder features all the colors of the rainbow and is perfect for keeping your keys safe and easy to find.",
-                colors: ["Rainbow"],
+                image: "images/keychain_holder1.jpg",
+                description: "A stylish tiger print keychain holder that keeps your keys organized and adds a wild touch to your bag! This holder features a bold tiger print pattern and is perfect for keeping your keys safe and easy to find.",
+                colors: ["Tiger Print"],
                 materials: "Soft fabric with metal ring",
                 care: "Spot clean with damp cloth"
             },
@@ -215,7 +215,9 @@
         // Display product details
         function displayProductDetails() {
             const productId = getProductIdFromUrl();
+            console.log('Product ID from URL:', productId);
             const product = products.find(p => p.id === productId);
+            console.log('Found product:', product);
             
             if (!product) {
                 document.getElementById('productDetail').innerHTML = '<h1>Product not found</h1>';
@@ -283,11 +285,21 @@
             alert(`Added ${quantity} ${product.name}${quantity > 1 ? 's' : ''} to your cart! 💕`);
         }
 
-        // Initialize product page
+        // Initialize product page immediately
+        console.log('Script loaded, initializing product page');
+        displayProductDetails();
+        
+        // Initialize cart when DOM is ready
         document.addEventListener('DOMContentLoaded', function() {
-            displayProductDetails();
-            updateCartDisplay();
+            console.log('DOM loaded, updating cart display');
+            // Wait for script.js to load before calling cart functions
+            setTimeout(() => {
+                if (typeof updateCartDisplay === 'function') {
+                    updateCartDisplay();
+                }
+            }, 100);
         });
     </script>
+    <script src="script.js"></script>
 </body>
 </html>

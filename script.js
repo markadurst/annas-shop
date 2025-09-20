@@ -74,12 +74,12 @@ const products = [
     // Keychain Holders
     {
         id: 8,
-        name: "Rainbow Keychain Holder",
+        name: "Tiger Print Keychain Holder",
         category: "keychains",
         price: 7.00,
-        image: "images/all_bracelets.jpeg",
-        description: "A colorful rainbow keychain holder that keeps your keys organized and adds a pop of color to your bag!",
-        colors: ["Rainbow"],
+        image: "images/keychain_holder1.jpg",
+        description: "A stylish tiger print keychain holder that keeps your keys organized and adds a wild touch to your bag!",
+        colors: ["Tiger Print"],
         materials: "Soft fabric with metal ring"
     },
     {
@@ -137,7 +137,10 @@ const cartTotal = document.getElementById('cartTotal');
 
 // Initialize the page
 document.addEventListener('DOMContentLoaded', function() {
-    displayProducts('all');
+    // Only display products if we're on the main page
+    if (productsGrid) {
+        displayProducts('all');
+    }
     updateCartDisplay();
     setupEventListeners();
 });
@@ -175,7 +178,9 @@ function displayProducts(category) {
         ? products 
         : products.filter(product => product.category === category);
     
-    productsGrid.innerHTML = filteredProducts.map(product => `
+    // Only update productsGrid if it exists (not on product page)
+    if (productsGrid) {
+        productsGrid.innerHTML = filteredProducts.map(product => `
         <div class="product-card" data-product-id="${product.id}">
             <img src="${product.image}" alt="${product.name}" class="product-image" onclick="goToProduct(${product.id})" style="cursor: pointer;">
             <h3 class="product-title" onclick="goToProduct(${product.id})" style="cursor: pointer;">${product.name}</h3>
@@ -185,6 +190,7 @@ function displayProducts(category) {
             </button>
         </div>
     `).join('');
+    }
 }
 
 // Add product to cart
