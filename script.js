@@ -3,72 +3,20 @@ const products = [
     // Friendship Bracelets
     {
         id: 1,
-        name: "Pink Friendship Bracelet",
+        name: "Friendship Bracelet",
         category: "bracelets",
-        price: 5.00,
-        image: "images/pink.jpeg",
-        description: "A beautiful pink friendship bracelet made with love. Perfect for sharing with your best friend!",
-        colors: ["Pink"],
-        materials: "High-quality cotton thread"
-    },
-    {
-        id: 2,
-        name: "Blue Friendship Bracelet",
-        category: "bracelets",
-        price: 5.00,
-        image: "images/blue.jpeg",
-        description: "A lovely blue friendship bracelet that matches the sky. Great for ocean lovers!",
-        colors: ["Blue"],
-        materials: "High-quality cotton thread"
-    },
-    {
-        id: 3,
-        name: "Green Friendship Bracelet",
-        category: "bracelets",
-        price: 5.00,
-        image: "images/green.jpeg",
-        description: "A fresh green friendship bracelet that reminds you of nature. Perfect for outdoor adventures!",
-        colors: ["Green"],
-        materials: "High-quality cotton thread"
-    },
-    {
-        id: 4,
-        name: "Purple Friendship Bracelet",
-        category: "bracelets",
-        price: 5.00,
-        image: "images/purple.jpeg",
-        description: "A magical purple friendship bracelet that sparkles with friendship magic!",
-        colors: ["Purple"],
-        materials: "High-quality cotton thread"
-    },
-    {
-        id: 5,
-        name: "Orange Friendship Bracelet",
-        category: "bracelets",
-        price: 5.00,
-        image: "images/orange.jpeg",
-        description: "A bright orange friendship bracelet that brings sunshine to your day!",
-        colors: ["Orange"],
-        materials: "High-quality cotton thread"
-    },
-    {
-        id: 6,
-        name: "Yellow Friendship Bracelet",
-        category: "bracelets",
-        price: 5.00,
-        image: "images/yellow.jpeg",
-        description: "A cheerful yellow friendship bracelet that spreads happiness wherever you go!",
-        colors: ["Yellow"],
-        materials: "High-quality cotton thread"
-    },
-    {
-        id: 7,
-        name: "Black Friendship Bracelet",
-        category: "bracelets",
-        price: 5.00,
-        image: "images/black.jpeg",
-        description: "A stylish black friendship bracelet that goes with everything. Perfect for any outfit!",
-        colors: ["Black"],
+        price: 3.00,
+        image: "images/all_bracelets.jpeg",
+        description: "Beautiful handmade friendship bracelets made with love. Perfect for sharing with your best friend! Choose from 7 vibrant colors.",
+        colors: [
+            "Pink",
+            "Blue", 
+            "Green",
+            "Purple",
+            "Orange",
+            "Yellow",
+            "Black"
+        ],
         materials: "High-quality cotton thread"
     },
     // Keychain Holders
@@ -76,7 +24,7 @@ const products = [
         id: 8,
         name: "Keychain Holder",
         category: "keychains",
-        price: 7.00,
+        price: 5.00,
         image: "images/keychains.jpg",
         description: "A stylish keychain holder that keeps your keys organized and adds personality to your bag! Choose from 9 fun designs.",
         designs: [
@@ -161,9 +109,7 @@ function displayProducts(category) {
             <img src="${product.image}" alt="${product.name}" class="product-image" onclick="goToProduct(${product.id})" style="cursor: pointer;">
             <h3 class="product-title" onclick="goToProduct(${product.id})" style="cursor: pointer;">${product.name}</h3>
             <p class="product-price">$${product.price.toFixed(2)}</p>
-            <button class="add-to-cart-btn" onclick="addToCart(${product.id})">
-                Add to Cart 🛒
-            </button>
+            <p class="product-description">Click to view options and add to cart</p>
         </div>
     `).join('');
     }
@@ -180,6 +126,12 @@ function addToCart(productId) {
 
     // For keychain holders, redirect to product page for design selection
     if (product.designs) {
+        window.location.href = `product.html?id=${productId}`;
+        return;
+    }
+
+    // For bracelets with multiple colors, redirect to product page for color selection
+    if (product.colors && product.colors.length > 1) {
         window.location.href = `product.html?id=${productId}`;
         return;
     }
@@ -210,7 +162,8 @@ function addToCart(productId) {
 // Remove product from cart
 function removeFromCart(cartKey) {
     cart = cart.filter(item => {
-        const itemKey = item.selectedDesign ? `${item.id}-${item.selectedDesign}` : item.id;
+        const itemKey = item.selectedDesign ? `${item.id}-${item.selectedDesign}` : 
+                       item.selectedColor ? `${item.id}-${item.selectedColor}` : item.id;
         return itemKey !== cartKey;
     });
     updateCartDisplay();
@@ -220,7 +173,8 @@ function removeFromCart(cartKey) {
 // Update quantity
 function updateQuantity(cartKey, change) {
     const item = cart.find(item => {
-        const itemKey = item.selectedDesign ? `${item.id}-${item.selectedDesign}` : item.id;
+        const itemKey = item.selectedDesign ? `${item.id}-${item.selectedDesign}` : 
+                       item.selectedColor ? `${item.id}-${item.selectedColor}` : item.id;
         return itemKey === cartKey;
     });
     if (item) {
@@ -247,22 +201,27 @@ function updateCartDisplay() {
     if (cart.length === 0) {
         cartItems.innerHTML = '<p style="text-align: center; color: #666; padding: 2rem;">Your cart is empty! Add some cute crafts! 💕</p>';
     } else {
-        cartItems.innerHTML = cart.map(item => `
+        cartItems.innerHTML = cart.map(item => {
+            const itemKey = item.selectedDesign ? `${item.id}-${item.selectedDesign}` : 
+                           item.selectedColor ? `${item.id}-${item.selectedColor}` : item.id;
+            return `
             <div class="cart-item">
                 <img src="${item.image}" alt="${item.name}" class="cart-item-image">
                 <div class="cart-item-details">
                     <div class="cart-item-title">${item.displayName || item.name}</div>
                     ${item.selectedDesign ? `<div class="cart-item-design">Design: ${item.selectedDesign}</div>` : ''}
+                    ${item.selectedColor ? `<div class="cart-item-color">Color: ${item.selectedColor}</div>` : ''}
                     <div class="cart-item-price">$${item.price.toFixed(2)}</div>
                     <div class="cart-item-quantity">
-                        <button class="quantity-btn" onclick="updateQuantity('${item.selectedDesign ? `${item.id}-${item.selectedDesign}` : item.id}', -1)">-</button>
+                        <button class="quantity-btn" onclick="updateQuantity('${itemKey}', -1)">-</button>
                         <span>${item.quantity}</span>
-                        <button class="quantity-btn" onclick="updateQuantity('${item.selectedDesign ? `${item.id}-${item.selectedDesign}` : item.id}', 1)">+</button>
+                        <button class="quantity-btn" onclick="updateQuantity('${itemKey}', 1)">+</button>
                     </div>
-                    <button class="remove-item" onclick="removeFromCart('${item.selectedDesign ? `${item.id}-${item.selectedDesign}` : item.id}')">Remove</button>
+                    <button class="remove-item" onclick="removeFromCart('${itemKey}')">Remove</button>
                 </div>
             </div>
-        `).join('');
+        `;
+        }).join('');
     }
 
     // Update total

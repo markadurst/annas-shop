@@ -73,78 +73,20 @@
             // Friendship Bracelets
             {
                 id: 1,
-                name: "Pink Friendship Bracelet",
+                name: "Friendship Bracelet",
                 category: "bracelets",
-                price: 5.00,
-                image: "images/pink.jpeg",
-                description: "A beautiful pink friendship bracelet made with love. Perfect for sharing with your best friend! This bracelet is carefully handcrafted using high-quality cotton thread and features a classic friendship bracelet pattern that will last for years to come.",
-                colors: ["Pink"],
-                materials: "High-quality cotton thread",
-                care: "Hand wash gently with mild soap and air dry"
-            },
-            {
-                id: 2,
-                name: "Blue Friendship Bracelet",
-                category: "bracelets",
-                price: 5.00,
-                image: "images/blue.jpeg",
-                description: "A lovely blue friendship bracelet that matches the sky. Great for ocean lovers! This bracelet features a beautiful blue color that reminds you of sunny days and clear skies.",
-                colors: ["Blue"],
-                materials: "High-quality cotton thread",
-                care: "Hand wash gently with mild soap and air dry"
-            },
-            {
-                id: 3,
-                name: "Green Friendship Bracelet",
-                category: "bracelets",
-                price: 5.00,
-                image: "images/green.jpeg",
-                description: "A fresh green friendship bracelet that reminds you of nature. Perfect for outdoor adventures! This bracelet brings the beauty of nature to your wrist.",
-                colors: ["Green"],
-                materials: "High-quality cotton thread",
-                care: "Hand wash gently with mild soap and air dry"
-            },
-            {
-                id: 4,
-                name: "Purple Friendship Bracelet",
-                category: "bracelets",
-                price: 5.00,
-                image: "images/purple.jpeg",
-                description: "A magical purple friendship bracelet that sparkles with friendship magic! This bracelet is perfect for those who love all things magical and mysterious.",
-                colors: ["Purple"],
-                materials: "High-quality cotton thread",
-                care: "Hand wash gently with mild soap and air dry"
-            },
-            {
-                id: 5,
-                name: "Orange Friendship Bracelet",
-                category: "bracelets",
-                price: 5.00,
-                image: "images/orange.jpeg",
-                description: "A bright orange friendship bracelet that brings sunshine to your day! This vibrant bracelet will brighten up any outfit and spread joy wherever you go.",
-                colors: ["Orange"],
-                materials: "High-quality cotton thread",
-                care: "Hand wash gently with mild soap and air dry"
-            },
-            {
-                id: 6,
-                name: "Yellow Friendship Bracelet",
-                category: "bracelets",
-                price: 5.00,
-                image: "images/yellow.jpeg",
-                description: "A cheerful yellow friendship bracelet that spreads happiness wherever you go! This sunny bracelet is perfect for spreading joy and positivity.",
-                colors: ["Yellow"],
-                materials: "High-quality cotton thread",
-                care: "Hand wash gently with mild soap and air dry"
-            },
-            {
-                id: 7,
-                name: "Black Friendship Bracelet",
-                category: "bracelets",
-                price: 5.00,
-                image: "images/black.jpeg",
-                description: "A stylish black friendship bracelet that goes with everything. Perfect for any outfit! This classic bracelet is versatile and elegant.",
-                colors: ["Black"],
+                price: 3.00,
+                image: "images/all_bracelets.jpeg",
+                description: "Beautiful handmade friendship bracelets made with love. Perfect for sharing with your best friend! Choose from 7 vibrant colors. Each bracelet is carefully handcrafted using high-quality cotton thread and features a classic friendship bracelet pattern that will last for years to come.",
+                colors: [
+                    "Pink",
+                    "Blue", 
+                    "Green",
+                    "Purple",
+                    "Orange",
+                    "Yellow",
+                    "Black"
+                ],
                 materials: "High-quality cotton thread",
                 care: "Hand wash gently with mild soap and air dry"
             },
@@ -153,7 +95,7 @@
                 id: 8,
                 name: "Keychain Holder",
                 category: "keychains",
-                price: 7.00,
+                price: 5.00,
                 image: "images/keychains.jpg",
                 description: "A stylish keychain holder that keeps your keys organized and adds personality to your bag! Choose from 9 fun designs. This holder is perfect for keeping your keys safe and easy to find.",
                 designs: [
@@ -218,6 +160,15 @@
                     </div>
                     ` : ''}
                     
+                    ${product.colors && product.colors.length > 1 ? `
+                    <div class="color-selector">
+                        <label for="color">Choose Color:</label>
+                        <select id="color">
+                            ${product.colors.map(color => `<option value="${color}">${color}</option>`).join('')}
+                        </select>
+                    </div>
+                    ` : ''}
+                    
                     <div class="quantity-selector">
                         <label for="quantity">Quantity:</label>
                         <select id="quantity">
@@ -250,14 +201,27 @@
                 selectedDesign = designSelect ? designSelect.value : product.designs[0];
             }
 
+            // Get selected color if it's a bracelet with multiple colors
+            let selectedColor = null;
+            if (product.colors && product.colors.length > 1) {
+                const colorSelect = document.getElementById('color');
+                selectedColor = colorSelect ? colorSelect.value : product.colors[0];
+            }
+
             // Get cart from localStorage or initialize empty array
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-            // Create unique key for cart item (productId + design)
-            const cartKey = selectedDesign ? `${productId}-${selectedDesign}` : productId;
+            // Create unique key for cart item (productId + design/color)
+            let cartKey = productId;
+            if (selectedDesign) {
+                cartKey = `${productId}-${selectedDesign}`;
+            } else if (selectedColor) {
+                cartKey = `${productId}-${selectedColor}`;
+            }
             
             const existingItem = cart.find(item => {
-                const itemKey = item.selectedDesign ? `${item.id}-${item.selectedDesign}` : item.id;
+                const itemKey = item.selectedDesign ? `${item.id}-${item.selectedDesign}` : 
+                               item.selectedColor ? `${item.id}-${item.selectedColor}` : item.id;
                 return itemKey === cartKey;
             });
 
@@ -275,6 +239,12 @@
                     cartItem.displayName = `${product.name} - ${selectedDesign}`;
                 }
                 
+                // Add color info if it's a bracelet with multiple colors
+                if (selectedColor) {
+                    cartItem.selectedColor = selectedColor;
+                    cartItem.displayName = `${product.name} - ${selectedColor}`;
+                }
+                
                 cart.push(cartItem);
             }
 
@@ -283,11 +253,12 @@
             
             // Update cart display if function exists
             if (typeof updateCartDisplay === 'function') {
-                updateCartDisplay();
+            updateCartDisplay();
             }
             
             // Show success message
-            const itemName = selectedDesign ? `${product.name} - ${selectedDesign}` : product.name;
+            const itemName = selectedDesign ? `${product.name} - ${selectedDesign}` : 
+                           selectedColor ? `${product.name} - ${selectedColor}` : product.name;
             alert(`Added ${quantity} ${itemName}${quantity > 1 ? 's' : ''} to your cart! 💕`);
         }
 
@@ -310,22 +281,27 @@
             if (cart.length === 0) {
                 cartItems.innerHTML = '<p style="text-align: center; color: #666; padding: 2rem;">Your cart is empty! Add some cute crafts! 💕</p>';
             } else {
-                cartItems.innerHTML = cart.map(item => `
+                cartItems.innerHTML = cart.map(item => {
+                    const itemKey = item.selectedDesign ? `${item.id}-${item.selectedDesign}` : 
+                                   item.selectedColor ? `${item.id}-${item.selectedColor}` : item.id;
+                    return `
                     <div class="cart-item">
                         <img src="${item.image}" alt="${item.name}" class="cart-item-image">
                         <div class="cart-item-details">
                             <div class="cart-item-title">${item.displayName || item.name}</div>
                             ${item.selectedDesign ? `<div class="cart-item-design">Design: ${item.selectedDesign}</div>` : ''}
+                            ${item.selectedColor ? `<div class="cart-item-color">Color: ${item.selectedColor}</div>` : ''}
                             <div class="cart-item-price">$${item.price.toFixed(2)}</div>
                             <div class="cart-item-quantity">
-                                <button class="quantity-btn" onclick="updateQuantity('${item.selectedDesign ? `${item.id}-${item.selectedDesign}` : item.id}', -1)">-</button>
+                                <button class="quantity-btn" onclick="updateQuantity('${itemKey}', -1)">-</button>
                                 <span>${item.quantity}</span>
-                                <button class="quantity-btn" onclick="updateQuantity('${item.selectedDesign ? `${item.id}-${item.selectedDesign}` : item.id}', 1)">+</button>
+                                <button class="quantity-btn" onclick="updateQuantity('${itemKey}', 1)">+</button>
                             </div>
-                            <button class="remove-item" onclick="removeFromCart('${item.selectedDesign ? `${item.id}-${item.selectedDesign}` : item.id}')">Remove</button>
+                            <button class="remove-item" onclick="removeFromCart('${itemKey}')">Remove</button>
                         </div>
                     </div>
-                `).join('');
+                `;
+                }).join('');
             }
 
             // Update total
@@ -347,7 +323,8 @@
         function updateQuantity(cartKey, change) {
             const cart = JSON.parse(localStorage.getItem('cart')) || [];
             const item = cart.find(item => {
-                const itemKey = item.selectedDesign ? `${item.id}-${item.selectedDesign}` : item.id;
+                const itemKey = item.selectedDesign ? `${item.id}-${item.selectedDesign}` : 
+                               item.selectedColor ? `${item.id}-${item.selectedColor}` : item.id;
                 return itemKey === cartKey;
             });
             if (item) {
@@ -363,7 +340,8 @@
         function removeFromCart(cartKey) {
             const cart = JSON.parse(localStorage.getItem('cart')) || [];
             const newCart = cart.filter(item => {
-                const itemKey = item.selectedDesign ? `${item.id}-${item.selectedDesign}` : item.id;
+                const itemKey = item.selectedDesign ? `${item.id}-${item.selectedDesign}` : 
+                               item.selectedColor ? `${item.id}-${item.selectedColor}` : item.id;
                 return itemKey !== cartKey;
             });
             localStorage.setItem('cart', JSON.stringify(newCart));
