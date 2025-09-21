@@ -151,12 +151,22 @@
             // Keychain Holders
             {
                 id: 8,
-                name: "Tiger Print Keychain Holder",
+                name: "Keychain Holder",
                 category: "keychains",
                 price: 7.00,
-                image: "images/keychain_holder1.jpg",
-                description: "A stylish tiger print keychain holder that keeps your keys organized and adds a wild touch to your bag! This holder features a bold tiger print pattern and is perfect for keeping your keys safe and easy to find.",
-                colors: ["Tiger Print"],
+                image: "images/keychains.jpg",
+                description: "A stylish keychain holder that keeps your keys organized and adds personality to your bag! Choose from 9 fun designs. This holder is perfect for keeping your keys safe and easy to find.",
+                designs: [
+                    "Cat Party",
+                    "Noir Owl", 
+                    "Midnight Llama",
+                    "Love Birds",
+                    "Elephant Parade",
+                    "Sloth Party",
+                    "Dog Party",
+                    "Wild Jungle",
+                    "Neon Shark"
+                ],
                 materials: "Soft fabric with metal ring",
                 care: "Spot clean with damp cloth"
             }
@@ -193,10 +203,20 @@
                     
                     <div class="product-specs">
                         <h3>Product Details</h3>
-                        <p><strong>Colors:</strong> ${product.colors.join(', ')}</p>
+                        ${product.colors ? `<p><strong>Colors:</strong> ${product.colors.join(', ')}</p>` : ''}
+                        ${product.designs ? `<p><strong>Available Designs:</strong> ${product.designs.join(', ')}</p>` : ''}
                         <p><strong>Materials:</strong> ${product.materials}</p>
                         <p><strong>Care Instructions:</strong> ${product.care}</p>
                     </div>
+                    
+                    ${product.designs ? `
+                    <div class="design-selector">
+                        <label for="design">Choose Design:</label>
+                        <select id="design">
+                            ${product.designs.map(design => `<option value="${design}">${design}</option>`).join('')}
+                        </select>
+                    </div>
+                    ` : ''}
                     
                     <div class="quantity-selector">
                         <label for="quantity">Quantity:</label>
@@ -223,17 +243,39 @@
             
             if (!product) return;
 
+            // Get selected design if it's a keychain holder
+            let selectedDesign = null;
+            if (product.designs) {
+                const designSelect = document.getElementById('design');
+                selectedDesign = designSelect ? designSelect.value : product.designs[0];
+            }
+
             // Get cart from localStorage or initialize empty array
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-            const existingItem = cart.find(item => item.id === productId);
+            // Create unique key for cart item (productId + design)
+            const cartKey = selectedDesign ? `${productId}-${selectedDesign}` : productId;
+            
+            const existingItem = cart.find(item => {
+                const itemKey = item.selectedDesign ? `${item.id}-${item.selectedDesign}` : item.id;
+                return itemKey === cartKey;
+            });
+
             if (existingItem) {
                 existingItem.quantity += quantity;
             } else {
-                cart.push({
+                const cartItem = {
                     ...product,
                     quantity: quantity
-                });
+                };
+                
+                // Add design info if it's a keychain holder
+                if (selectedDesign) {
+                    cartItem.selectedDesign = selectedDesign;
+                    cartItem.displayName = `${product.name} - ${selectedDesign}`;
+                }
+                
+                cart.push(cartItem);
             }
 
             // Save cart to localStorage
@@ -245,7 +287,8 @@
             }
             
             // Show success message
-            alert(`Added ${quantity} ${product.name}${quantity > 1 ? 's' : ''} to your cart! 💕`);
+            const itemName = selectedDesign ? `${product.name} - ${selectedDesign}` : product.name;
+            alert(`Added ${quantity} ${itemName}${quantity > 1 ? 's' : ''} to your cart! 💕`);
         }
 
         // Cart functionality for product page
@@ -271,14 +314,15 @@
                     <div class="cart-item">
                         <img src="${item.image}" alt="${item.name}" class="cart-item-image">
                         <div class="cart-item-details">
-                            <div class="cart-item-title">${item.name}</div>
+                            <div class="cart-item-title">${item.displayName || item.name}</div>
+                            ${item.selectedDesign ? `<div class="cart-item-design">Design: ${item.selectedDesign}</div>` : ''}
                             <div class="cart-item-price">$${item.price.toFixed(2)}</div>
                             <div class="cart-item-quantity">
-                                <button class="quantity-btn" onclick="updateQuantity(${item.id}, -1)">-</button>
+                                <button class="quantity-btn" onclick="updateQuantity('${item.selectedDesign ? `${item.id}-${item.selectedDesign}` : item.id}', -1)">-</button>
                                 <span>${item.quantity}</span>
-                                <button class="quantity-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
+                                <button class="quantity-btn" onclick="updateQuantity('${item.selectedDesign ? `${item.id}-${item.selectedDesign}` : item.id}', 1)">+</button>
                             </div>
-                            <button class="remove-item" onclick="removeFromCart(${item.id})">Remove</button>
+                            <button class="remove-item" onclick="removeFromCart('${item.selectedDesign ? `${item.id}-${item.selectedDesign}` : item.id}')">Remove</button>
                         </div>
                     </div>
                 `).join('');
@@ -300,9 +344,12 @@
             document.body.style.overflow = cartSidebar.classList.contains('open') ? 'hidden' : 'auto';
         }
 
-        function updateQuantity(productId, change) {
+        function updateQuantity(cartKey, change) {
             const cart = JSON.parse(localStorage.getItem('cart')) || [];
-            const item = cart.find(item => item.id === productId);
+            const item = cart.find(item => {
+                const itemKey = item.selectedDesign ? `${item.id}-${item.selectedDesign}` : item.id;
+                return itemKey === cartKey;
+            });
             if (item) {
                 item.quantity += change;
                 if (item.quantity <= 0) {
@@ -313,9 +360,12 @@
             }
         }
 
-        function removeFromCart(productId) {
+        function removeFromCart(cartKey) {
             const cart = JSON.parse(localStorage.getItem('cart')) || [];
-            const newCart = cart.filter(item => item.id !== productId);
+            const newCart = cart.filter(item => {
+                const itemKey = item.selectedDesign ? `${item.id}-${item.selectedDesign}` : item.id;
+                return itemKey !== cartKey;
+            });
             localStorage.setItem('cart', JSON.stringify(newCart));
             updateCartDisplay();
         }

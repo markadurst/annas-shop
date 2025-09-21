@@ -74,12 +74,22 @@ const products = [
     // Keychain Holders
     {
         id: 8,
-        name: "Tiger Print Keychain Holder",
+        name: "Keychain Holder",
         category: "keychains",
         price: 7.00,
-        image: "images/keychain_holder1.jpg",
-        description: "A stylish tiger print keychain holder that keeps your keys organized and adds a wild touch to your bag!",
-        colors: ["Tiger Print"],
+        image: "images/keychains.jpg",
+        description: "A stylish keychain holder that keeps your keys organized and adds personality to your bag! Choose from 9 fun designs.",
+        designs: [
+            "Cat Party",
+            "Noir Owl", 
+            "Midnight Llama",
+            "Love Birds",
+            "Elephant Parade",
+            "Sloth Party",
+            "Dog Party",
+            "Wild Jungle",
+            "Neon Shark"
+        ],
         materials: "Soft fabric with metal ring"
     }
 ];
@@ -168,6 +178,12 @@ function addToCart(productId) {
         return;
     }
 
+    // For keychain holders, redirect to product page for design selection
+    if (product.designs) {
+        window.location.href = `product.html?id=${productId}`;
+        return;
+    }
+
     const existingItem = cart.find(item => item.id === productId);
     if (existingItem) {
         existingItem.quantity += 1;
@@ -192,19 +208,25 @@ function addToCart(productId) {
 }
 
 // Remove product from cart
-function removeFromCart(productId) {
-    cart = cart.filter(item => item.id !== productId);
+function removeFromCart(cartKey) {
+    cart = cart.filter(item => {
+        const itemKey = item.selectedDesign ? `${item.id}-${item.selectedDesign}` : item.id;
+        return itemKey !== cartKey;
+    });
     updateCartDisplay();
     saveCart();
 }
 
 // Update quantity
-function updateQuantity(productId, change) {
-    const item = cart.find(item => item.id === productId);
+function updateQuantity(cartKey, change) {
+    const item = cart.find(item => {
+        const itemKey = item.selectedDesign ? `${item.id}-${item.selectedDesign}` : item.id;
+        return itemKey === cartKey;
+    });
     if (item) {
         item.quantity += change;
         if (item.quantity <= 0) {
-            removeFromCart(productId);
+            removeFromCart(cartKey);
         } else {
             updateCartDisplay();
             saveCart();
@@ -229,14 +251,15 @@ function updateCartDisplay() {
             <div class="cart-item">
                 <img src="${item.image}" alt="${item.name}" class="cart-item-image">
                 <div class="cart-item-details">
-                    <div class="cart-item-title">${item.name}</div>
+                    <div class="cart-item-title">${item.displayName || item.name}</div>
+                    ${item.selectedDesign ? `<div class="cart-item-design">Design: ${item.selectedDesign}</div>` : ''}
                     <div class="cart-item-price">$${item.price.toFixed(2)}</div>
                     <div class="cart-item-quantity">
-                        <button class="quantity-btn" onclick="updateQuantity(${item.id}, -1)">-</button>
+                        <button class="quantity-btn" onclick="updateQuantity('${item.selectedDesign ? `${item.id}-${item.selectedDesign}` : item.id}', -1)">-</button>
                         <span>${item.quantity}</span>
-                        <button class="quantity-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
+                        <button class="quantity-btn" onclick="updateQuantity('${item.selectedDesign ? `${item.id}-${item.selectedDesign}` : item.id}', 1)">+</button>
                     </div>
-                    <button class="remove-item" onclick="removeFromCart(${item.id})">Remove</button>
+                    <button class="remove-item" onclick="removeFromCart('${item.selectedDesign ? `${item.id}-${item.selectedDesign}` : item.id}')">Remove</button>
                 </div>
             </div>
         `).join('');
