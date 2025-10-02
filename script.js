@@ -39,6 +39,25 @@ const products = [
             "Neon Shark"
         ],
         materials: "Soft fabric with metal ring"
+    },
+    // Pot Holders
+    {
+        id: 9,
+        name: "Pot Holder",
+        category: "pot-holders",
+        price: 8.00,
+        image: "images/potHolders.jpg",
+        description: "Beautiful handmade pot holders to protect your hands while cooking! Choose from 6 charming designs. Perfect for any kitchen and makes a great gift!",
+        designs: [
+            "Blue and Yellow Fun",
+            "Pink and White Fun",
+            "Pink Orange Yellow and Green Fun",
+            "Halloween",
+            "Black Yellow Purple Pink White Blue Pattern 1",
+            "Black Yellow Purple Pink White Blue Pattern 2"
+        ],
+        materials: "High-quality cotton fabric with heat-resistant padding",
+        care: "Machine wash gentle cycle, air dry"
     }
 ];
 
