@@ -105,15 +105,25 @@
                 return;
             }
             
-            orderItems.innerHTML = cart.map(item => `
-                <div class="order-item">
-                    <div>
-                        <strong>${item.name}</strong><br>
-                        <small>Qty: ${item.quantity}</small>
+            orderItems.innerHTML = cart.map(item => {
+                let itemDetails = `<strong>${item.name}</strong>`;
+                if (item.selectedDesign) {
+                    itemDetails += `<br><small>Design: ${item.selectedDesign}</small>`;
+                }
+                if (item.selectedColor) {
+                    itemDetails += `<br><small>Color: ${item.selectedColor}</small>`;
+                }
+                itemDetails += `<br><small>Qty: ${item.quantity}</small>`;
+                
+                return `
+                    <div class="order-item">
+                        <div>
+                            ${itemDetails}
+                        </div>
+                        <div>$${(item.price * item.quantity).toFixed(2)}</div>
                     </div>
-                    <div>$${(item.price * item.quantity).toFixed(2)}</div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
             
             const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             orderTotal.textContent = total.toFixed(2);
@@ -145,7 +155,17 @@
                 address: document.getElementById('address').value,
                 city: document.getElementById('city').value,
                 zip: document.getElementById('zip').value,
-                items: cart.map(item => `${item.name} (Qty: ${item.quantity}) - $${(item.price * item.quantity).toFixed(2)}`).join('\n'),
+                items: cart.map(item => {
+                    let itemDetails = `${item.name}`;
+                    if (item.selectedDesign) {
+                        itemDetails += ` - Design: ${item.selectedDesign}`;
+                    }
+                    if (item.selectedColor) {
+                        itemDetails += ` - Color: ${item.selectedColor}`;
+                    }
+                    itemDetails += ` (Qty: ${item.quantity}) - $${(item.price * item.quantity).toFixed(2)}`;
+                    return itemDetails;
+                }).join('\n'),
                 total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2)
             };
             
