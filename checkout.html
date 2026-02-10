@@ -150,6 +150,15 @@
             }
             console.log('Form is valid, proceeding with order...');
             
+            // Re-read cart from localStorage in case it was updated elsewhere
+            const cartForOrder = JSON.parse(localStorage.getItem('cart')) || [];
+            
+            // Build personalized keychain names list (dedicated field so it always shows in email)
+            const personalizedKeychains = cartForOrder
+                .filter(item => item.id === 10 && item.personalizedName)
+                .map(item => `${item.quantity}x ${item.selectedColor || ''} - "${item.personalizedName}"`)
+                .join('; ');
+            
             // Collect order data
             const orderData = {
                 name: document.getElementById('name').value,
@@ -158,7 +167,7 @@
                 address: document.getElementById('address').value,
                 city: document.getElementById('city').value,
                 zip: document.getElementById('zip').value,
-                items: cart.map(item => {
+                items: cartForOrder.map(item => {
                     let itemDetails = `${item.name}`;
                     if (item.selectedDesign) {
                         itemDetails += ` - Design: ${item.selectedDesign}`;
@@ -166,13 +175,14 @@
                     if (item.selectedColor) {
                         itemDetails += ` - Color: ${item.selectedColor}`;
                     }
-                    if (item.personalizedName) {
+                    if (item.personalizedName != null && String(item.personalizedName).trim() !== '') {
                         itemDetails += ` - Name: ${item.personalizedName}`;
                     }
                     itemDetails += ` (Qty: ${item.quantity}) - $${(item.price * item.quantity).toFixed(2)}`;
                     return itemDetails;
                 }).join('\n'),
-                total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2)
+                total: cartForOrder.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2),
+                personalizedKeychains: personalizedKeychains || '(none)'
             };
             
             // Send email using Formspree (to Anna)
@@ -189,6 +199,7 @@
                     address: orderData.address,
                     city: orderData.city,
                     zip: orderData.zip,
+                    'Personalized Keychain Names': orderData.personalizedKeychains,
                     message: `New Order from Anna's Sweet Crafts!\n\nItems:\n${orderData.items}\n\nTotal: $${orderData.total}\n\nWe will contact you soon for payment and delivery options! 💕`
                 })
             })
