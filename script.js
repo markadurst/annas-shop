@@ -19,6 +19,25 @@ const products = [
         ],
         materials: "High-quality cotton thread"
     },
+    // Personalized Keychains
+    {
+        id: 10,
+        name: "Personalized Keychains",
+        category: "keychains",
+        price: 5.00,
+        image: "images/3d_name.jpg",
+        description: "3D printed keychains that can be personalized! Good for backpacks and more! They're plastic and not very breakable.",
+        colors: [
+            "Red",
+            "Orange",
+            "Yellow",
+            "Green",
+            "Blue",
+            "Purple"
+        ],
+        materials: "Durable plastic",
+        care: "Wipe clean with damp cloth"
+    },
     // Keychain Holders
     {
         id: 8,
