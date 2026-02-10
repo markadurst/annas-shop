@@ -207,6 +207,13 @@
                     </div>
                     ` : ''}
                     
+                    ${product.id === 10 ? `
+                    <div class="name-selector" style="margin: 1rem 0;">
+                        <label for="personalizedName">Name for keychain:</label>
+                        <input type="text" id="personalizedName" placeholder="Enter name" maxlength="20" style="display: block; margin-top: 0.25rem; padding: 0.5rem; width: 100%; max-width: 200px; font-size: 1rem;">
+                    </div>
+                    ` : ''}
+                    
                     <div class="quantity-selector">
                         <label for="quantity">Quantity:</label>
                         <select id="quantity">
@@ -246,20 +253,27 @@
                 selectedColor = colorSelect ? colorSelect.value : product.colors[0];
             }
 
+            // Get personalized name for Personalized Keychains (id 10)
+            let personalizedName = null;
+            if (product.id === 10) {
+                const nameEl = document.getElementById('personalizedName');
+                const raw = nameEl ? nameEl.value.trim() : '';
+                personalizedName = raw.replace(/[^a-zA-Z0-9 '\']/g, '') || null;
+            }
+
             // Get cart from localStorage or initialize empty array
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-            // Create unique key for cart item (productId + design/color)
+            // Create unique key for cart item (productId + design/color/name)
             let cartKey = productId;
             if (selectedDesign) {
                 cartKey = `${productId}-${selectedDesign}`;
             } else if (selectedColor) {
-                cartKey = `${productId}-${selectedColor}`;
+                cartKey = personalizedName != null ? `${productId}-${selectedColor}-${personalizedName}` : `${productId}-${selectedColor}`;
             }
             
             const existingItem = cart.find(item => {
-                const itemKey = item.selectedDesign ? `${item.id}-${item.selectedDesign}` : 
-                               item.selectedColor ? `${item.id}-${item.selectedColor}` : item.id;
+                const itemKey = getCartItemKey(item);
                 return itemKey === cartKey;
             });
 
@@ -283,6 +297,10 @@
                     cartItem.displayName = `${product.name} - ${selectedColor}`;
                 }
                 
+                if (personalizedName != null) {
+                    cartItem.personalizedName = personalizedName;
+                }
+                
                 cart.push(cartItem);
             }
 
@@ -295,9 +313,18 @@
             }
             
             // Show success message
-            const itemName = selectedDesign ? `${product.name} - ${selectedDesign}` : 
+            let itemName = selectedDesign ? `${product.name} - ${selectedDesign}` : 
                            selectedColor ? `${product.name} - ${selectedColor}` : product.name;
+            if (personalizedName) itemName += ` (${personalizedName})`;
             alert(`Added ${quantity} ${itemName}${quantity > 1 ? 's' : ''} to your cart! 💕`);
+        }
+
+        // Consistent cart item key for update/remove/display
+        function getCartItemKey(item) {
+            if (item.selectedDesign) return `${item.id}-${item.selectedDesign}`;
+            if (item.personalizedName) return `${item.id}-${item.selectedColor}-${item.personalizedName}`;
+            if (item.selectedColor) return `${item.id}-${item.selectedColor}`;
+            return String(item.id);
         }
 
         // Cart functionality for product page
@@ -320,8 +347,8 @@
                 cartItems.innerHTML = '<p style="text-align: center; color: #666; padding: 2rem;">Your cart is empty! Add some cute crafts! 💕</p>';
             } else {
                 cartItems.innerHTML = cart.map(item => {
-                    const itemKey = item.selectedDesign ? `${item.id}-${item.selectedDesign}` : 
-                                   item.selectedColor ? `${item.id}-${item.selectedColor}` : item.id;
+                    const itemKey = getCartItemKey(item);
+                    const safeKey = String(itemKey).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
                     return `
                     <div class="cart-item">
                         <img src="${item.image}" alt="${item.name}" class="cart-item-image">
@@ -329,13 +356,14 @@
                             <div class="cart-item-title">${item.displayName || item.name}</div>
                             ${item.selectedDesign ? `<div class="cart-item-design">Design: ${item.selectedDesign}</div>` : ''}
                             ${item.selectedColor ? `<div class="cart-item-color">Color: ${item.selectedColor}</div>` : ''}
+                            ${item.personalizedName ? `<div class="cart-item-name">Name: ${item.personalizedName}</div>` : ''}
                             <div class="cart-item-price">$${item.price.toFixed(2)}</div>
                             <div class="cart-item-quantity">
-                                <button class="quantity-btn" onclick="updateQuantity('${itemKey}', -1)">-</button>
+                                <button class="quantity-btn" onclick="updateQuantity('${safeKey}', -1)">-</button>
                                 <span>${item.quantity}</span>
-                                <button class="quantity-btn" onclick="updateQuantity('${itemKey}', 1)">+</button>
+                                <button class="quantity-btn" onclick="updateQuantity('${safeKey}', 1)">+</button>
                             </div>
-                            <button class="remove-item" onclick="removeFromCart('${itemKey}')">Remove</button>
+                            <button class="remove-item" onclick="removeFromCart('${safeKey}')">Remove</button>
                         </div>
                     </div>
                 `;
@@ -360,11 +388,7 @@
 
         function updateQuantity(cartKey, change) {
             const cart = JSON.parse(localStorage.getItem('cart')) || [];
-            const item = cart.find(item => {
-                const itemKey = item.selectedDesign ? `${item.id}-${item.selectedDesign}` : 
-                               item.selectedColor ? `${item.id}-${item.selectedColor}` : item.id;
-                return itemKey === cartKey;
-            });
+            const item = cart.find(item => getCartItemKey(item) === cartKey);
             if (item) {
                 item.quantity += change;
                 if (item.quantity <= 0) {
@@ -377,11 +401,7 @@
 
         function removeFromCart(cartKey) {
             const cart = JSON.parse(localStorage.getItem('cart')) || [];
-            const newCart = cart.filter(item => {
-                const itemKey = item.selectedDesign ? `${item.id}-${item.selectedDesign}` : 
-                               item.selectedColor ? `${item.id}-${item.selectedColor}` : item.id;
-                return itemKey !== cartKey;
-            });
+            const newCart = cart.filter(item => getCartItemKey(item) !== cartKey);
             localStorage.setItem('cart', JSON.stringify(newCart));
             updateCartDisplay();
         }

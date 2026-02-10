@@ -197,24 +197,24 @@ function addToCart(productId) {
     showAddToCartAnimation(productId);
 }
 
+// Consistent cart item key for update/remove/display
+function getCartItemKey(item) {
+    if (item.selectedDesign) return `${item.id}-${item.selectedDesign}`;
+    if (item.personalizedName) return `${item.id}-${item.selectedColor}-${item.personalizedName}`;
+    if (item.selectedColor) return `${item.id}-${item.selectedColor}`;
+    return String(item.id);
+}
+
 // Remove product from cart
 function removeFromCart(cartKey) {
-    cart = cart.filter(item => {
-        const itemKey = item.selectedDesign ? `${item.id}-${item.selectedDesign}` : 
-                       item.selectedColor ? `${item.id}-${item.selectedColor}` : item.id;
-        return itemKey !== cartKey;
-    });
+    cart = cart.filter(item => getCartItemKey(item) !== cartKey);
     updateCartDisplay();
     saveCart();
 }
 
 // Update quantity
 function updateQuantity(cartKey, change) {
-    const item = cart.find(item => {
-        const itemKey = item.selectedDesign ? `${item.id}-${item.selectedDesign}` : 
-                       item.selectedColor ? `${item.id}-${item.selectedColor}` : item.id;
-        return itemKey === cartKey;
-    });
+    const item = cart.find(item => getCartItemKey(item) === cartKey);
     if (item) {
         item.quantity += change;
         if (item.quantity <= 0) {
@@ -240,8 +240,8 @@ function updateCartDisplay() {
         cartItems.innerHTML = '<p style="text-align: center; color: #666; padding: 2rem;">Your cart is empty! Add some cute crafts! 💕</p>';
     } else {
         cartItems.innerHTML = cart.map(item => {
-            const itemKey = item.selectedDesign ? `${item.id}-${item.selectedDesign}` : 
-                           item.selectedColor ? `${item.id}-${item.selectedColor}` : item.id;
+            const itemKey = getCartItemKey(item);
+            const safeKey = String(itemKey).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
             return `
             <div class="cart-item">
                 <img src="${item.image}" alt="${item.name}" class="cart-item-image">
@@ -249,13 +249,14 @@ function updateCartDisplay() {
                     <div class="cart-item-title">${item.displayName || item.name}</div>
                     ${item.selectedDesign ? `<div class="cart-item-design">Design: ${item.selectedDesign}</div>` : ''}
                     ${item.selectedColor ? `<div class="cart-item-color">Color: ${item.selectedColor}</div>` : ''}
+                    ${item.personalizedName ? `<div class="cart-item-name">Name: ${item.personalizedName}</div>` : ''}
                     <div class="cart-item-price">$${item.price.toFixed(2)}</div>
                     <div class="cart-item-quantity">
-                        <button class="quantity-btn" onclick="updateQuantity('${itemKey}', -1)">-</button>
+                        <button class="quantity-btn" onclick="updateQuantity('${safeKey}', -1)">-</button>
                         <span>${item.quantity}</span>
-                        <button class="quantity-btn" onclick="updateQuantity('${itemKey}', 1)">+</button>
+                        <button class="quantity-btn" onclick="updateQuantity('${safeKey}', 1)">+</button>
                     </div>
-                    <button class="remove-item" onclick="removeFromCart('${itemKey}')">Remove</button>
+                    <button class="remove-item" onclick="removeFromCart('${safeKey}')">Remove</button>
                 </div>
             </div>
         `;
