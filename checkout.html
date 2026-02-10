@@ -113,6 +113,9 @@
                 if (item.selectedColor) {
                     itemDetails += `<br><small>Color: ${item.selectedColor}</small>`;
                 }
+                if (item.personalizedName) {
+                    itemDetails += `<br><small>Name: ${item.personalizedName}</small>`;
+                }
                 itemDetails += `<br><small>Qty: ${item.quantity}</small>`;
                 
                 return `
@@ -162,6 +165,9 @@
                     }
                     if (item.selectedColor) {
                         itemDetails += ` - Color: ${item.selectedColor}`;
+                    }
+                    if (item.personalizedName) {
+                        itemDetails += ` - Name: ${item.personalizedName}`;
                     }
                     itemDetails += ` (Qty: ${item.quantity}) - $${(item.price * item.quantity).toFixed(2)}`;
                     return itemDetails;
